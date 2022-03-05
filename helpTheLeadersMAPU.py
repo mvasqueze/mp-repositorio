@@ -42,14 +42,20 @@ def combinations(topics, topicsPerTalk, prohWords):
     #tmp = [None]*topicsPerTalk
     #length = len(topics)
     if topicsPerTalk==1:
+        #If there is just one topic per speech, then we shall print all the topics provided but the prohibited ones
         allCombs=topics
         return allCombs
     if topicsPerTalk==2:
+        '''This is the base of the recursion: When you need to do just 2-tuples the key is to take the
+        longest word (in lexicographical order) and concatenate it with the rest other words, then you take
+        the second longest word and concatenate it with the rest of the words and so on. '''
         for i in topics:
             firstWord=topics.pop(0)
             for j in topics:
                 allCombs.append(firstWord+' '+j)
     if topicsPerTalk>2:
+        '''This is when the recursion happens: This part of the method takes the longest word in lexicographical
+        order and concatenates it with the n-1 tuples previously generated.'''
         output=allCombs.copy()
         allCombs.clear()
         for i in topics:
