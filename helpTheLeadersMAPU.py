@@ -13,12 +13,14 @@ import copy
 def organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, prohWords):
         #All posible topics saved in topics[]
         for i in range(0, amountTopics):
-            topics[i] = input()
-        
+            topics[i] = input().upper()
+            
         #All prohibited combinations saved in prohibitedCombinations[]
         for i in range(0, prohibitedCombinations):
-            prohibited[i] = input()
+            prohibited[i] = input().upper()
 
+        prohibited.sort()
+        prohibited.sort(key = len, reverse = True)
         #Organize topics array in lexicographical and length order
         topics.sort()
         topics.sort(key = len, reverse =True)
@@ -35,7 +37,6 @@ def organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, proh
             una lista de tuplas'''
 
 
-
 #Function to create the combinations of the topics according to the quantity specified
 def combinations(topics, topicsPerTalk, prohWords):
     allCombs = []
@@ -49,10 +50,13 @@ def combinations(topics, topicsPerTalk, prohWords):
         '''This is the base of the recursion: When you need to do just 2-tuples the key is to take the
         longest word (in lexicographical order) and concatenate it with the rest other words, then you take
         the second longest word and concatenate it with the rest of the words and so on. '''
-        for i in range (0, len(topics)):
-            for j in range(i+1,len(topics)):
-                if(checkCombinations(prohWords, i, j)):
-                     allCombs.append(topics[i]+' '+topics[j])
+       
+        for i in range (len(topics)+1):
+            for j in topics[i+1:len(topics)]:
+                pos = []
+                pos.append(topics.index(j))
+                if(checkCombinations(prohWords, i,pos)):
+                    allCombs.append(topics[i]+' '+j)
                 else:
                     continue
 
@@ -62,12 +66,13 @@ def combinations(topics, topicsPerTalk, prohWords):
         output=allCombs.copy()
         allCombs.clear()
         for i in range (0, len(topics)):
-            previousTuples=combinations(topics[i+1:len(topics)], topicsPerTalk-1, prohWords)
+            previousTuples=combinations(topics[i+1:len(topics)+1], topicsPerTalk-1, prohWords)
             for j in previousTuples:
-                word1, word2 = j.split()
-                pos1 = topics.index(word1)
-                pos2 = topics.index(word2)
-                if(checkCombinations(prohWords, i,pos1) and checkCombinations(prohWords, i, pos2)):
+                listWords = j.split(" ")
+                pos = []
+                for h in listWords:
+                    pos.append(topics.index(h))
+                if(checkCombinations(prohWords, i,pos)):
                     output.append(topics[i]+' '+j)
                 else:
                     continue
@@ -80,11 +85,16 @@ def combinations(topics, topicsPerTalk, prohWords):
 
 ## [[1],[0],[],[7],[],[],[],[3]]
 
-def checkCombinations(prohWords, firstWord, j):
-    if (j in prohWords[firstWord]):
-        return False
-    else:
-        return True
+def checkCombinations(prohWords, firstWord, pos):
+    flag = True
+    for i in range (0, len(pos)):
+        if (pos[i] in prohWords[firstWord]):
+            flag = False
+            return flag
+        else:
+            flag = True
+    
+    return flag
     
 
 def main():
@@ -115,18 +125,16 @@ def main():
         topicsPerTalk = int(amount)
 
         #Initialize the arrays of topics & prohibited combinations
-        topics = [None] * amountTopics
-        prohibited = [None] * prohibitedCombinations
+        topics = [ [] for _ in range(amountTopics)]
+        prohibited = [ [] for _ in range(prohibitedCombinations)]
         prohWords = [ [] for _ in range(amountTopics)]
 
         #Call the function to organize the information provided
         organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, prohWords)
-        
-        #Cycle to do the combinations to each set
-        #for i in range(0, numberOfSets): 
+
         #Call combinations function
         allCombs = combinations(topics, topicsPerTalk, prohWords)
-        print("Set:", i+1)
+        print("Set %d:" %(i+1))
         #Print the combinations of each set
         for j in allCombs:
             print(j)
