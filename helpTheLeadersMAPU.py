@@ -49,30 +49,43 @@ def combinations(topics, topicsPerTalk, prohWords):
         '''This is the base of the recursion: When you need to do just 2-tuples the key is to take the
         longest word (in lexicographical order) and concatenate it with the rest other words, then you take
         the second longest word and concatenate it with the rest of the words and so on. '''
-        for i in topics:
-            firstWord=topics.pop(0)
-            for j in topics:
-                allCombs.append(firstWord+' '+j)
+        for i in range (0, len(topics)):
+            for j in range(i+1,len(topics)):
+                if(checkCombinations(prohWords, i, j)):
+                     allCombs.append(topics[i]+' '+topics[j])
+                else:
+                    continue
+
     if topicsPerTalk>2:
         '''This is when the recursion happens: This part of the method takes the longest word in lexicographical
         order and concatenates it with the n-1 tuples previously generated.'''
         output=allCombs.copy()
         allCombs.clear()
-        for i in topics:
-            firstWord=topics.pop(0)
+        for i in range (0, len(topics)):
             previousTuples=combinations(topics, topicsPerTalk-1, prohWords)
             for j in previousTuples:
-                output.append(firstWord+' '+j)
+                word1, word2 = j.split()
+                pos1 = topics.index(word1)
+                pos2 = topics.index(word2)
+                if(checkCombinations(prohWords, i,pos1) and checkCombinations(prohWords, i, pos2)):
+                    output.append(topics[i]+' '+j)
+                else:
+                    continue
         allCombs=output.copy()
+    
     return allCombs
  
 #Function to check if the words with which I'm making the combinatios are prohibited among them, if so
 #return False, and if not returns True
-def checkCombinations(prohWords, pos, pos2):
-    for i in range(0,len(prohWords[pos2])):
-        if(prohWords[pos2][i] == pos):
-            return False
+
+## [[3,1],[0],[],[0]]
+
+def checkCombinations(prohWords, firstWord, j):
+    if (j in prohWords[firstWord]):
+        return False
+    else:
         return True
+    
 
 def main():
     numberOfSets = int(input())
