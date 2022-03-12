@@ -29,33 +29,41 @@ def organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, proh
             
             index1 = topics.index(topic1)
             index2 = topics.index(topic2)
-            prohWords[index1].append(index2)
+            prohWords[index1].append(index2) 
             prohWords[index2].append(index1)
+            '''Qué tal si se guardan ambas palabras juntas ordenadas en orden lexicográfico, p.ej.
+            una lista de tuplas'''
 
 
 
 #Function to create the combinations of the topics according to the quantity specified
 def combinations(topics, topicsPerTalk, prohWords):
     allCombs = []
-    tmp = [None]*topicsPerTalk
-    length = len(topics)
-    def next_num(li=0, pos=0):
-        if pos == topicsPerTalk:
-            allCombs.append(copy.copy(tmp))
-            return
-
-        for pos2 in range(li,length):
-            #Calls the function checkCombinations to check if the combination with such words can be done
-            #If the combination can't be done we enter to this if and we continue the combinations without
-            #considering the prohibited.
-            if(not checkCombinations(prohWords, pos, pos2)):
-                tmp[pos] = topics[pos2]
-                next_num(pos2+1, pos+1)
-            #If the combination can be done we just continue with the function
-            else:
-                next_num(pos2+1, pos)
-    next_num()
-
+    #tmp = [None]*topicsPerTalk
+    #length = len(topics)
+    if topicsPerTalk==1:
+        #If there is just one topic per speech, then we shall print all the topics provided but the prohibited ones
+        allCombs=topics
+        return allCombs
+    if topicsPerTalk==2:
+        '''This is the base of the recursion: When you need to do just 2-tuples the key is to take the
+        longest word (in lexicographical order) and concatenate it with the rest other words, then you take
+        the second longest word and concatenate it with the rest of the words and so on. '''
+        for i in topics:
+            firstWord=topics.pop(0)
+            for j in topics:
+                allCombs.append(firstWord+' '+j)
+    if topicsPerTalk>2:
+        '''This is when the recursion happens: This part of the method takes the longest word in lexicographical
+        order and concatenates it with the n-1 tuples previously generated.'''
+        output=allCombs.copy()
+        allCombs.clear()
+        for i in topics:
+            firstWord=topics.pop(0)
+            previousTuples=combinations(topics, topicsPerTalk-1, prohWords)
+            for j in previousTuples:
+                output.append(firstWord+' '+j)
+        allCombs=output.copy()
     return allCombs
  
 #Function to check if the words with which I'm making the combinatios are prohibited among them, if so
@@ -79,7 +87,6 @@ def main():
             x += 1
         x += 1
         amountTopics = int(amount)
-
         amount = ""
         while x < len(infoSets) and infoSets[x] != " ":
             amount += infoSets[x]
@@ -102,8 +109,8 @@ def main():
         #Call the function to organize the information provided
         organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, prohWords)
         
-    #Cycle to do the combinations to each set
-    for i in range(0, numberOfSets): 
+        #Cycle to do the combinations to each set
+        #for i in range(0, numberOfSets): 
         #Call combinations function
         allCombs = combinations(topics, topicsPerTalk, prohWords)
         print("Set:", i+1)
