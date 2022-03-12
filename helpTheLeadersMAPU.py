@@ -18,7 +18,8 @@ def organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, proh
         #All prohibited combinations saved in prohibitedCombinations[]
         for i in range(0, prohibitedCombinations):
             prohibited[i] = input()
-
+        prohibited.sort()
+        prohibited.sort(key = len, reverse =True)
         #Organize topics array in lexicographical and length order
         topics.sort()
         topics.sort(key = len, reverse =True)
