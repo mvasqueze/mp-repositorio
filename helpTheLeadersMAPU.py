@@ -62,7 +62,7 @@ def combinations(topics, topicsPerTalk, prohWords):
         output=allCombs.copy()
         allCombs.clear()
         for i in range (0, len(topics)):
-            previousTuples=combinations(topics, topicsPerTalk-1, prohWords)
+            previousTuples=combinations(topics[i+1:len(topics)], topicsPerTalk-1, prohWords)
             for j in previousTuples:
                 word1, word2 = j.split()
                 pos1 = topics.index(word1)
@@ -78,7 +78,7 @@ def combinations(topics, topicsPerTalk, prohWords):
 #Function to check if the words with which I'm making the combinatios are prohibited among them, if so
 #return False, and if not returns True
 
-## [[3,1],[0],[],[0]]
+## [[1],[0],[],[7],[],[],[],[3]]
 
 def checkCombinations(prohWords, firstWord, j):
     if (j in prohWords[firstWord]):
@@ -129,9 +129,7 @@ def main():
         print("Set:", i+1)
         #Print the combinations of each set
         for j in allCombs:
-            for h in j:
-                print(h)
-            print()
+            print(j)
         print()
 
 main()
