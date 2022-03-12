@@ -130,7 +130,7 @@ def main():
         #Print the combinations of each set
         for j in allCombs:
             for h in j:
-                print(h, end = " ")
+                print(h)
             print()
         print()
 
