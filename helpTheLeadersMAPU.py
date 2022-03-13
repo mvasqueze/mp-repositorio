@@ -10,16 +10,17 @@ import copy
 #Plus, I created an array that has arrays, the same amount of topics as there are, and in each
 #array will be stored the position of the words it can't be combined with, meaning, if we have 4 topics
 #and topic 0 can't be with topic 3, the array will look like this: [[3],[],[0],[]]
-def organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, prohWords):
+def organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, listaTuplas):
         #All posible topics saved in topics[]
         for i in range(0, amountTopics):
-            topics[i] = input()
-        
+            topics[i] = input().upper()
+            
         #All prohibited combinations saved in prohibitedCombinations[]
         for i in range(0, prohibitedCombinations):
-            prohibited[i] = input()
+            prohibited[i] = input().upper()
+
         prohibited.sort()
-        prohibited.sort(key = len, reverse =True)
+        prohibited.sort(key = len, reverse = True)
         #Organize topics array in lexicographical and length order
         topics.sort()
         topics.sort(key = len, reverse =True)
@@ -27,18 +28,18 @@ def organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, proh
         #Prohibited words saved in prohWords[]
         for i in range (0, len(prohibited)):
             topic1, topic2 = prohibited[i].split()
-            
             index1 = topics.index(topic1)
             index2 = topics.index(topic2)
-            prohWords[index1].append(index2) 
-            prohWords[index2].append(index1)
+            tuplaProh=(index1, index2)
+            listaTuplas.append(tuplaProh)
+            #prohWords[index1].append(index2) 
+            #prohWords[index2].append(index1)
             '''Qué tal si se guardan ambas palabras juntas ordenadas en orden lexicográfico, p.ej.
             una lista de tuplas'''
-
-
+        print("lista de tuplas: ", listaTuplas)
 
 #Function to create the combinations of the topics according to the quantity specified
-def combinations(topics, topicsPerTalk, prohWords):
+def combinations(topics, topicsPerTalk, listaTuplas):
     allCombs = []
     #tmp = [None]*topicsPerTalk
     #length = len(topics)
@@ -50,10 +51,13 @@ def combinations(topics, topicsPerTalk, prohWords):
         '''This is the base of the recursion: When you need to do just 2-tuples the key is to take the
         longest word (in lexicographical order) and concatenate it with the rest other words, then you take
         the second longest word and concatenate it with the rest of the words and so on. '''
-        for i in range (0, len(topics)):
-            for j in range(i+1,len(topics)):
-                if(checkCombinations(prohWords, i, j)):
-                     allCombs.append(topics[i]+' '+topics[j])
+       
+        for i in range (len(topics)+1):
+            for j in topics[i+1:len(topics)]:
+                pos = []
+                pos.append(topics.index(j))
+                if(checkCombinations(listaTuplas, i,pos)):
+                    allCombs.append(topics[i]+' '+j)
                 else:
                     continue
 
@@ -63,12 +67,16 @@ def combinations(topics, topicsPerTalk, prohWords):
         output=allCombs.copy()
         allCombs.clear()
         for i in range (0, len(topics)):
-            previousTuples=combinations(topics[i+1:len(topics)], topicsPerTalk-1, prohWords)
+            previousTuples=combinations(topics[i+1:len(topics)+1], topicsPerTalk-1, listaTuplas)
+            listaAux=[]
             for j in previousTuples:
-                word1, word2 = j.split()
-                pos1 = topics.index(word1)
-                pos2 = topics.index(word2)
-                if(checkCombinations(prohWords, i,pos1) and checkCombinations(prohWords, i, pos2)):
+                listWords = j.split(" ")
+                pos = []
+                listaAux.append(i)
+                for h in listWords:
+                    listaAux.append(topics.index(h))
+                
+                if(checkCombinations(listaTuplas, i,listaAux)):
                     output.append(topics[i]+' '+j)
                 else:
                     continue
@@ -81,11 +89,16 @@ def combinations(topics, topicsPerTalk, prohWords):
 
 ## [[1],[0],[],[7],[],[],[],[3]]
 
-def checkCombinations(prohWords, firstWord, j):
-    if (j in prohWords[firstWord]):
-        return False
-    else:
-        return True
+def checkCombinations(listaTuplas, firstWord, listAux):
+    flag = True
+    for t in listaTuplas:
+        if (t[0] in listAux and t[1] in listAux):
+            flag = False
+            return flag
+        else:
+            flag = True
+    
+    return flag
     
 
 def main():
@@ -116,18 +129,17 @@ def main():
         topicsPerTalk = int(amount)
 
         #Initialize the arrays of topics & prohibited combinations
-        topics = [None] * amountTopics
-        prohibited = [None] * prohibitedCombinations
-        prohWords = [ [] for _ in range(amountTopics)]
+        topics = [ [] for _ in range(amountTopics)]
+        prohibited = [ [] for _ in range(prohibitedCombinations)]
+        #listaTuplas = [ [] for _ in range(amountTopics)]
+        listaTuplas = []
 
         #Call the function to organize the information provided
-        organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, prohWords)
-        
-        #Cycle to do the combinations to each set
-        #for i in range(0, numberOfSets): 
+        organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, listaTuplas)
+
         #Call combinations function
-        allCombs = combinations(topics, topicsPerTalk, prohWords)
-        print("Set:", i+1)
+        allCombs = combinations(topics, topicsPerTalk, listaTuplas)
+        print("Set %d:" %(i+1))
         #Print the combinations of each set
         for j in allCombs:
             print(j)
