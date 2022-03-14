@@ -52,34 +52,35 @@ def combinations(topics, topicsPerTalk, listaTuplas):
         longest word (in lexicographical order) and concatenate it with the rest other words, then you take
         the second longest word and concatenate it with the rest of the words and so on. '''
        
-        for i in range (len(topics)+1):
+        for i in range (len(topics)):
             for j in topics[i+1:len(topics)]:
                 pos = []
-                pos.append(topics.index(j))
-                print("Checking:", pos)
+                pos.append(topics.index(j)) #ESTA PONIENDOLO 1 INDICE ANTES CUANDO SON 3
+                print(pos)
+                print(j)
+                print(i)
                 if(checkCombinations(listaTuplas, i,pos)):
                     allCombs.append(topics[i]+' '+j)
-                    print("TRUE")
                 else:
-                    print("FALSE")
                     continue
 
     if topicsPerTalk>2:
         '''This is when the recursion happens: This part of the method takes the longest word in lexicographical
         order and concatenates it with the n-1 tuples previously generated.'''
-        output=allCombs.copy()
-        allCombs.clear()
+        output = []
         for i in range (0, len(topics)):
-            previousTuples=combinations(topics[i+1:len(topics)+1], topicsPerTalk-1, listaTuplas)
+            print("tuplas", listaTuplas)
+            previousTuples=combinations(topics[i+1:len(topics)], topicsPerTalk-1, listaTuplas)
             listaAux=[]
             for j in previousTuples:
                 listWords = j.split(" ")
                 pos = []
-                listaAux.append(i)
+                #listaAux.append(i)
                 for h in listWords:
                     listaAux.append(topics.index(h))
-                print("Lista revisar:", listaAux)
-                #listaAux.clear()
+            
+                listaAux.clear()
+
                 if(checkCombinations(listaTuplas, i,listaAux)):
                     output.append(topics[i]+' '+j)
                 else:
