@@ -56,9 +56,12 @@ def combinations(topics, topicsPerTalk, listaTuplas):
             for j in topics[i+1:len(topics)]:
                 pos = []
                 pos.append(topics.index(j))
+                print("Checking:", pos)
                 if(checkCombinations(listaTuplas, i,pos)):
                     allCombs.append(topics[i]+' '+j)
+                    print("TRUE")
                 else:
+                    print("FALSE")
                     continue
 
     if topicsPerTalk>2:
@@ -75,7 +78,8 @@ def combinations(topics, topicsPerTalk, listaTuplas):
                 listaAux.append(i)
                 for h in listWords:
                     listaAux.append(topics.index(h))
-                
+                print("Lista revisar:", listaAux)
+                #listaAux.clear()
                 if(checkCombinations(listaTuplas, i,listaAux)):
                     output.append(topics[i]+' '+j)
                 else:
@@ -92,7 +96,7 @@ def combinations(topics, topicsPerTalk, listaTuplas):
 def checkCombinations(listaTuplas, firstWord, listAux):
     flag = True
     for t in listaTuplas:
-        if (t[0] in listAux and t[1] in listAux):
+        if ((t[0] in listAux or t[0]== firstWord) and (t[1] in listAux or t[1] == firstWord)):
             flag = False
             return flag
         else:
