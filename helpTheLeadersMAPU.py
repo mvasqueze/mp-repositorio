@@ -39,8 +39,9 @@ def organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, list
         #print("lista de tuplas: ", listaTuplas)
 
 #Function to create the combinations of the topics according to the quantity specified
-def combinations(topics, topicsPerTalk, listaTuplas):
+def combinations(topics, topicsPerTalk, listaTuplas, topicsForCombs, index):
     allCombs = []
+    topicsForCombs = topics.copy()
     #tmp = [None]*topicsPerTalk
     #length = len(topics)
     if topicsPerTalk==1:
@@ -51,9 +52,8 @@ def combinations(topics, topicsPerTalk, listaTuplas):
         '''This is the base of the recursion: When you need to do just 2-tuples the key is to take the
         longest word (in lexicographical order) and concatenate it with the rest other words, then you take
         the second longest word and concatenate it with the rest of the words and so on. '''
-       
-        for i in range (len(topics)+1):
-            for j in topics[i+1:len(topics)]:
+        for i in range (index, len(topics)):
+            for j in topicsForCombs[i+1:]:
                 pos = []
                 pos.append(topics.index(j))
                 auxVar=[i, topics.index(j)]
@@ -68,7 +68,8 @@ def combinations(topics, topicsPerTalk, listaTuplas):
         output=allCombs.copy()
         allCombs.clear()
         for i in range (0, len(topics)):
-            previousTuples=combinations(topics[i+1:len(topics)+1], topicsPerTalk-1, listaTuplas)
+            index = i+1
+            previousTuples=combinations(topics, topicsPerTalk-1, listaTuplas, topicsForCombs[i+1:], index)
             
             for j in previousTuples:
                 listaAux=[]
@@ -142,13 +143,14 @@ def main():
         prohibited = [ [] for _ in range(prohibitedCombinations)]
         #listaTuplas = [ [] for _ in range(amountTopics)]
         listaTuplas = []
+        topicsForCombs = []
 
         #Call the function to organize the information provided
         organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, listaTuplas)
 
         #Call combinations function
-        
-        allCombs = combinations(topics, topicsPerTalk, listaTuplas)
+        index = 0
+        allCombs = combinations(topics, topicsPerTalk, listaTuplas, topicsForCombs, index)
         setInfo.append("Set %d:" %(i+1))
         for j in allCombs:
             setInfo.append(j)
@@ -157,4 +159,3 @@ def main():
     print()
 
 main()
-
