@@ -91,6 +91,12 @@ def combinations(topics, topicsPerTalk, listaTuplas):
 
 ## [[1],[0],[],[7],[],[],[],[3]]
 
+def printer(setInfo):
+    for i in setInfo:
+        print(i)
+    setInfo.clear()
+
+
 def checkCombinations(listaTuplas, firstWord, listAux):
     flag = True
     for t in listaTuplas:
@@ -104,6 +110,7 @@ def checkCombinations(listaTuplas, firstWord, listAux):
     
 
 def main():
+    setInfo = []
     numberOfSets = int(input())
     for i in range(0, numberOfSets):
         #Read all the line of the info (amount of topics, amount of prohibited combinations & quantity of topics per combination)
@@ -140,12 +147,13 @@ def main():
         organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, listaTuplas)
 
         #Call combinations function
+        
         allCombs = combinations(topics, topicsPerTalk, listaTuplas)
-        print("Set %d:" %(i+1))
-        #Print the combinations of each set
+        setInfo.append("Set %d:" %(i+1))
         for j in allCombs:
-            print(j)
-        print()
+            setInfo.append(j)
+        setInfo.append('')
+    printer(setInfo)
     print()
 
 main()
