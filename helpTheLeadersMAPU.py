@@ -36,7 +36,7 @@ def organizeInput(amountTopics, prohibitedCombinations, topics, prohibited, list
             #prohWords[index2].append(index1)
             '''Qué tal si se guardan ambas palabras juntas ordenadas en orden lexicográfico, p.ej.
             una lista de tuplas'''
-        print("lista de tuplas: ", listaTuplas)
+        #print("lista de tuplas: ", listaTuplas)
 
 #Function to create the combinations of the topics according to the quantity specified
 def combinations(topics, topicsPerTalk, listaTuplas):
@@ -52,14 +52,12 @@ def combinations(topics, topicsPerTalk, listaTuplas):
         longest word (in lexicographical order) and concatenate it with the rest other words, then you take
         the second longest word and concatenate it with the rest of the words and so on. '''
        
-        for i in range (len(topics)):
+        for i in range (len(topics)+1):
             for j in topics[i+1:len(topics)]:
                 pos = []
-                pos.append(topics.index(j)) #ESTA PONIENDOLO 1 INDICE ANTES CUANDO SON 3
-                print(pos)
-                print(j)
-                print(i)
-                if(checkCombinations(listaTuplas, i,pos)):
+                pos.append(topics.index(j))
+                auxVar=[i, topics.index(j)]
+                if(checkCombinations(listaTuplas, i,auxVar)):
                     allCombs.append(topics[i]+' '+j)
                 else:
                     continue
@@ -67,20 +65,19 @@ def combinations(topics, topicsPerTalk, listaTuplas):
     if topicsPerTalk>2:
         '''This is when the recursion happens: This part of the method takes the longest word in lexicographical
         order and concatenates it with the n-1 tuples previously generated.'''
-        output = []
+        output=allCombs.copy()
+        allCombs.clear()
         for i in range (0, len(topics)):
-            print("tuplas", listaTuplas)
-            previousTuples=combinations(topics[i+1:len(topics)], topicsPerTalk-1, listaTuplas)
-            listaAux=[]
+            previousTuples=combinations(topics[i+1:len(topics)+1], topicsPerTalk-1, listaTuplas)
+            
             for j in previousTuples:
+                listaAux=[]
                 listWords = j.split(" ")
                 pos = []
-                #listaAux.append(i)
+                listaAux.append(i)
                 for h in listWords:
                     listaAux.append(topics.index(h))
-            
-                listaAux.clear()
-
+                
                 if(checkCombinations(listaTuplas, i,listaAux)):
                     output.append(topics[i]+' '+j)
                 else:
@@ -97,7 +94,7 @@ def combinations(topics, topicsPerTalk, listaTuplas):
 def checkCombinations(listaTuplas, firstWord, listAux):
     flag = True
     for t in listaTuplas:
-        if ((t[0] in listAux or t[0]== firstWord) and (t[1] in listAux or t[1] == firstWord)):
+        if (t[0] in listAux and t[1] in listAux):
             flag = False
             return flag
         else:
@@ -149,6 +146,7 @@ def main():
         for j in allCombs:
             print(j)
         print()
+    print()
 
 main()
 
