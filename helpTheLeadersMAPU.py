@@ -67,7 +67,7 @@ def combinations(topics, topicsPerTalk, listaTuplas, topicsForCombs, index):
         order and concatenates it with the n-1 tuples previously generated.'''
         output=allCombs.copy()
         allCombs.clear()
-        for i in range (0, len(topics)):
+        for i in range (index, len(topics)):
             index = i+1
             previousTuples=combinations(topics, topicsPerTalk-1, listaTuplas, topicsForCombs[i+1:], index)
             
@@ -96,11 +96,12 @@ def printer(setInfo):
     for i in setInfo:
         print(i)
     setInfo.clear()
+    print()
 
 
 def checkCombinations(listaTuplas, firstWord, listAux):
     flag = True
-    for t in listaTuplas:
+    for t in listaTuplas: # [(7,0), (4,3), (1,2)]
         if (t[0] in listAux and t[1] in listAux):
             flag = False
             return flag
@@ -141,7 +142,6 @@ def main():
         #Initialize the arrays of topics & prohibited combinations
         topics = [ [] for _ in range(amountTopics)]
         prohibited = [ [] for _ in range(prohibitedCombinations)]
-        #listaTuplas = [ [] for _ in range(amountTopics)]
         listaTuplas = []
         topicsForCombs = []
 
@@ -157,5 +157,6 @@ def main():
         setInfo.append('')
     printer(setInfo)
     print()
+
 
 main()
